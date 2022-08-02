@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: ./build/python
+    volumes:
+      - ./proj/app_001:/code/app #Replace application
+
+      - ./ssl/mkcert-localhost:/code/ssl #Replace key.pem & cert.pem
+      
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 443 --ssl-keyfile=./ssl/key.pem --ssl-certfile=./ssl/cert.pem --reload --debug
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 443 --reload --debug
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload --debug
+    ports:
+      # - "443:443"
+      - "80:80"
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+          - ./data/db_001:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+
+
+
+  
+  
+  
